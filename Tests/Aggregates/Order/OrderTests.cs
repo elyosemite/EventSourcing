@@ -124,12 +124,23 @@ public class OrderTests
     }
 
     [Test]
-    public void ConfirmPayment()
+    public void ConfirmPayment_success()
     {
         var order = Order.Place(OrderId, CustomerId, ShippingAddress);
         order.ConfirmPayment("payment-id-123", 123m);
         
         Assert.That(order.Version, Is.EqualTo(2));
         Assert.That(order.Amount, Is.EqualTo(123m));
+    }
+
+    [Test]
+    public void ConfirmPayment_failure()
+    {
+        var order = Order.Place(OrderId, CustomerId, ShippingAddress);
+        order.ConfirmPayment("FAIL", 123m);
+        
+        Assert.That(order.Version, Is.EqualTo(2));
+        Assert.That(order.Amount, Is.EqualTo(123m));
+        Assert.That(order.Reason, Is.EqualTo("Payment failed due to invalid payment ID."));
     }
 }
