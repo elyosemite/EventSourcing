@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Sample/">
+    <Project Path="Sample/WebApi/WebApi.csproj" />
+  </Folder>
   <Project Path="Core/Core.csproj" />
   <Project Path="Tests/Tests.csproj" />
 </Solution>
