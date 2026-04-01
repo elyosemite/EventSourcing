@@ -2,15 +2,10 @@ namespace Core.Aggregates.Order;
 
 using Core.Aggregates.Order.Events;
 
-public partial class Order
-    : AggregateRoot,
-    IEventHandler<OrderPlacedEvent>,
-    IEventHandler<PaymentConfirmedEvent>,
-    IEventHandler<PaymentFailedEvent>
+public partial class Order : AggregateRoot
 {
     public string CustomerId { get; private set; }
     public string ShippingAddress { get; private set; }
-    
     public string PaymentId { get; private set; }
     public decimal Amount { get; private set; }
     public string Reason { get; private set; }

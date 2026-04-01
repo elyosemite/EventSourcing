@@ -2,7 +2,7 @@
 
 namespace Core.Aggregates.Order;
 
-public partial class Order
+public partial class Order : IEventHandler<PaymentConfirmedEvent>
 {
     public void When(PaymentConfirmedEvent @event)
     {

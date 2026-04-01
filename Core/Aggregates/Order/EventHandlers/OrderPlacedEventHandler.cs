@@ -2,7 +2,7 @@ namespace Core.Aggregates.Order;
 
 using Core.Aggregates.Order.Events;
 
-public partial class Order
+public partial class Order : IEventHandler<OrderPlacedEvent>
 {
     public void When(OrderPlacedEvent @event)
     {

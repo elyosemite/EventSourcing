@@ -6,8 +6,8 @@ namespace Tests.Aggregates;
 [TestFixture]
 public class OrderTests
 {
-    private static readonly Guid   OrderId         = Guid.NewGuid();
-    private static readonly string CustomerId      = "customer-123";
+    private static readonly Guid OrderId = Guid.NewGuid();
+    private static readonly string CustomerId = "customer-123";
     private static readonly string ShippingAddress = "Rua das Flores, 42";
 
     [Test]
