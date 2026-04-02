@@ -13,6 +13,6 @@ public interface IDomainEvent
 /// <param name="AggregateId"></param>
 public abstract record DomainEvent(Guid AggregateId) : IDomainEvent
 {
-    public int EventVersion { get; init; } = 1;
-    public DateTime OccurredOn { get; init; } = DateTime.UtcNow;
+    public int EventVersion { get; set; } = 1;
+    public DateTime OccurredOn { get; set; } = DateTime.UtcNow;
 }

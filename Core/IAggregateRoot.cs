@@ -1,6 +1,23 @@
+using System.Collections.Frozen;
+
 namespace Core;
 
-public interface IAggregateRoot : IEntity
+public interface IDomainEventDispatcher
+{
+    void Dispatch(IDomainEvent @event);
+}
+
+public interface IEventSourcingHandler<T> where T : IAggregateRoot
+{
+    FrozenDictionary<Type, Action<T, IDomainEvent>> GetHandlers();
+}
+
+public interface IEventSourcing
+{
+    void Rehydrate(IEnumerable<IDomainEvent> history);
+}
+
+public interface IAggregateRoot : IEntity, IDomainEventDispatcher
 {
     /// <summary>
     /// Atenção com este campo; Depois você tem que verificar se ele realmente
@@ -8,7 +25,7 @@ public interface IAggregateRoot : IEntity
     /// </summary>
     int Version { get; }
 
-    IReadOnlyList<IDomainEvent> DomainEvents { get; }
+    IReadOnlyList<IDomainEvent> UncommittedEvents { get; }
 
-    void Rehydrate(IEnumerable<IDomainEvent> history);
+    void MarkEventsAsCommitted(); // clear uncommitted events
 }

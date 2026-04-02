@@ -1,32 +1,36 @@
-using System.Collections.Concurrent;
+using System.Collections.Frozen;
 
 namespace Core;
 
-public abstract class AggregateRoot : IEntity
+public abstract class AggregateRoot : IAggregateRoot, IEventSourcing
 {
-    private readonly ConcurrentDictionary<Type, Action<IDomainEvent>> _handlers = new();
     private readonly List<IDomainEvent> _domainEvents = new();
 
     public Guid Id { get; protected set; }
     public int Version { get; protected set; }
 
-    public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
-    public void ClearDomainEvents() => _domainEvents.Clear();
+    public IReadOnlyList<IDomainEvent> UncommittedEvents => _domainEvents.AsReadOnly();
+    
+    public void MarkEventsAsCommitted() => _domainEvents.Clear();
 
-    protected void Register<TEvent>(IEventHandler<TEvent> handler)
-        where TEvent : IDomainEvent
+    protected void EmitDomainEvent(IDomainEvent @event)
     {
-        _handlers.TryAdd(typeof(TEvent), @event => handler.When((TEvent)@event));
-    }
-
-    protected void Apply(IDomainEvent @event)
-    {
+        EnrichEvent(@event);
         Dispatch(@event);
-        Version++;
-        _domainEvents.Add(@event);
     }
 
-    protected void Rehydrate(IEnumerable<IDomainEvent> history)
+    // Domain Event Dispatcher
+
+    public void Dispatch(IDomainEvent @event)
+    {
+        if (!GetHandlers().TryGetValue(@event.GetType(), out var handle))
+            throw new InvalidOperationException($"No handler registered for event type {@event.GetType().Name}");
+
+        handle(this, @event);
+    }
+
+    // Event Sourcing methods
+    public void Rehydrate(IEnumerable<IDomainEvent> history)
     {
         foreach (var @event in history)
         {
@@ -35,11 +39,16 @@ public abstract class AggregateRoot : IEntity
         }
     }
 
-    private void Dispatch(IDomainEvent @event)
+    private void EnrichEvent(IDomainEvent @event)
     {
-        if (_handlers.TryGetValue(@event.GetType(), out var handle))
+        if (@event is DomainEvent domainEventevent)
         {
-            handle(@event);
+            domainEventevent.OccurredOn = DateTime.UtcNow;
         }
+
+        _domainEvents.Add(@event);
+        Version++;
     }
+
+    public abstract FrozenDictionary<Type, Action<IAggregateRoot, IDomainEvent>> GetHandlers();
 }
