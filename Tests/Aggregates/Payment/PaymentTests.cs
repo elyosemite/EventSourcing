@@ -13,6 +13,7 @@ public class PaymentTests
 
         Assert.That(payment.UncommittedEvents, Has.Count.EqualTo(1));
         Assert.That(payment.UncommittedEvents[0], Is.TypeOf<PaymentCreated>());
+        
         var createdEvent = (PaymentCreated)payment.UncommittedEvents[0];
         Assert.That(createdEvent.Amount, Is.EqualTo(100m));
         Assert.That(createdEvent.Currency, Is.EqualTo("USD"));
@@ -44,5 +45,6 @@ public class PaymentTests
         Assert.That(payment.UncommittedEvents[0], Is.TypeOf<PaymentAmountUpdated>());
         var amountUpdatedEvent = (PaymentAmountUpdated)payment.UncommittedEvents[0];
         Assert.That(amountUpdatedEvent.NewAmount, Is.EqualTo(200m));
+        
     }
 }

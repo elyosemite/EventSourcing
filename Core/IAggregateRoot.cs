@@ -7,11 +7,6 @@ public interface IDomainEventDispatcher
     void Dispatch(IDomainEvent @event);
 }
 
-public interface IEventSourcingHandler<T> where T : IAggregateRoot
-{
-    FrozenDictionary<Type, Action<T, IDomainEvent>> GetHandlers();
-}
-
 public interface IEventSourcing
 {
     void Rehydrate(IEnumerable<IDomainEvent> history);

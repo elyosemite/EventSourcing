@@ -2,7 +2,12 @@ using System.Collections.Frozen;
 
 namespace Core;
 
-public abstract class AggregateRoot : IAggregateRoot, IEventSourcing
+public abstract class DomainEventRegistry
+{
+    public abstract FrozenDictionary<Type, Action<IAggregateRoot, IDomainEvent>> GetHandlers();
+}
+
+public abstract class AggregateRoot : DomainEventRegistry, IAggregateRoot, IEventSourcing
 {
     private readonly List<IDomainEvent> _domainEvents = new();
 
@@ -49,6 +54,4 @@ public abstract class AggregateRoot : IAggregateRoot, IEventSourcing
         _domainEvents.Add(@event);
         Version++;
     }
-
-    public abstract FrozenDictionary<Type, Action<IAggregateRoot, IDomainEvent>> GetHandlers();
 }
