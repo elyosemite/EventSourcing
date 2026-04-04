@@ -13,9 +13,11 @@ public class Payment : AggregateRoot
     public decimal Amount { get; private set; }
     public string Currency { get; private set; } = string.Empty;
 
-    internal static readonly FrozenDictionary<Type, Action<Payment, IDomainEvent>> _handlers = 
+    internal readonly FrozenDictionary<Type, Action<Payment, IDomainEvent>> _handlers = 
         DomainEventHandler.CreateFor<Payment>()
             .On<PaymentCreated>(static (aggregate, @event) => aggregate.Apply(@event))
+            .On<PaymentAmountUpdated>(static (aggregate, @event) => aggregate.Apply(@event))
+            .On<PaymentCurrencyUpdated>(static (aggregate, @event) => aggregate.Apply(@event))
             .BuildFrozen();
 
     private Payment() { }

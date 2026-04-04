@@ -4,7 +4,7 @@ namespace Core;
 
 public abstract class DomainEventRegistry
 {
-    public abstract FrozenDictionary<Type, Action<IAggregateRoot, IDomainEvent>> GetHandlers();
+    public abstract FrozenDictionary<Type, Action<AggregateRoot, IDomainEvent>> GetHandlers();
 }
 
 public abstract class AggregateRoot : DomainEventRegistry, IAggregateRoot, IEventSourcing
