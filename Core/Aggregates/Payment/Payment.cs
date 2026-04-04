@@ -13,16 +13,16 @@ public class Payment : AggregateRoot
     public decimal Amount { get; private set; }
     public string Currency { get; private set; } = string.Empty;
 
-    internal readonly FrozenDictionary<Type, Action<Payment, IDomainEvent>> _handlers = 
+    internal readonly FrozenDictionary<Type, Action<IAggregateRoot, IDomainEvent>> _handlers = 
         DomainEventHandler.CreateFor<Payment>()
-            .On<PaymentCreated>(static (aggregate, @event) => aggregate.Apply(@event))
-            .On<PaymentAmountUpdated>(static (aggregate, @event) => aggregate.Apply(@event))
-            .On<PaymentCurrencyUpdated>(static (aggregate, @event) => aggregate.Apply(@event))
+            .On<PaymentCreated>(static (aggregate, @event) => ((Payment)aggregate).Apply(@event))
+            .On<PaymentAmountUpdated>(static (aggregate, @event) => ((Payment)aggregate).Apply(@event))
+            .On<PaymentCurrencyUpdated>(static (aggregate, @event) => ((Payment)aggregate).Apply(@event))
             .BuildFrozen();
 
     private Payment() { }
 
-    public override FrozenDictionary<Type, Action<Payment, IDomainEvent>> GetHandlers() => _handlers;
+    public override FrozenDictionary<Type, Action<IAggregateRoot, IDomainEvent>> GetHandlers() => _handlers;
 
     public static Payment Create(Guid orderId, decimal amount, string currency)
     {
