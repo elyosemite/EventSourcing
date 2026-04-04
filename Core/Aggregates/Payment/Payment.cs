@@ -1,5 +1,3 @@
-using System.Collections.Frozen;
-
 namespace Core.Aggregates.Payment;
 
 // Domain Events
@@ -13,16 +11,7 @@ public class Payment : AggregateRoot
     public decimal Amount { get; private set; }
     public string Currency { get; private set; } = string.Empty;
 
-    internal readonly FrozenDictionary<Type, Action<IAggregateRoot, IDomainEvent>> _handlers = 
-        DomainEventHandler.CreateFor<Payment>()
-            .On<PaymentCreated>(static (aggregate, @event) => ((Payment)aggregate).Apply(@event))
-            .On<PaymentAmountUpdated>(static (aggregate, @event) => ((Payment)aggregate).Apply(@event))
-            .On<PaymentCurrencyUpdated>(static (aggregate, @event) => ((Payment)aggregate).Apply(@event))
-            .BuildFrozen();
-
     private Payment() { }
-
-    public override FrozenDictionary<Type, Action<IAggregateRoot, IDomainEvent>> GetHandlers() => _handlers;
 
     public static Payment Create(Guid orderId, decimal amount, string currency)
     {
@@ -43,6 +32,24 @@ public class Payment : AggregateRoot
         var payment = new Payment();
         payment.Rehydrate(history);
         return payment;
+    }
+
+    protected override void Dispatch(IDomainEvent @event)
+    {
+        switch (@event)
+        {
+            case PaymentCreated e:
+                Apply(e);
+                break;
+            case PaymentAmountUpdated e:
+                Apply(e);
+                break;
+            case PaymentCurrencyUpdated e:
+                Apply(e);
+                break;
+            default:
+                throw new InvalidOperationException($"No handler for event type {@event.GetType().Name}");
+        }
     }
 
     #region Event Handlers

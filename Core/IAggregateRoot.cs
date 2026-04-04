@@ -1,18 +1,11 @@
-using System.Collections.Frozen;
-
 namespace Core;
-
-public interface IDomainEventDispatcher
-{
-    void Dispatch(IDomainEvent @event);
-}
 
 public interface IEventSourcing
 {
     void Rehydrate(IEnumerable<IDomainEvent> history);
 }
 
-public interface IAggregateRoot : IEntity, IDomainEventDispatcher
+public interface IAggregateRoot : IEntity
 {
     /// <summary>
     /// Atenção com este campo; Depois você tem que verificar se ele realmente
