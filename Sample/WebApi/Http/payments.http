@@ -1,0 +1,36 @@
+@host = http://localhost:5278
+@paymentId = 3fa85f64-5717-4562-b3fc-2c963f66afa6
+
+### 1. Iniciar pagamento
+POST {{host}}/payments
+Content-Type: application/json
+
+{
+  "orderId": "{{paymentId}}",
+  "amount": 150.00,
+  "currency": "BRL"
+}
+
+### 2. Autorizar pagamento
+POST {{host}}/payments/{{paymentId}}/authorize
+Content-Type: application/json
+
+{
+  "creditCardNumber": "4111111111111111",
+  "creditCardCode": "123"
+}
+
+###
+
+### 2a. Autorizar pagamento — cartão inválido (recusado)
+POST {{host}}/payments/{{paymentId}}/authorize
+Content-Type: application/json
+
+{
+  "creditCardNumber": "",
+  "creditCardCode": ""
+}
+
+### 3. Capture Payment
+POST {{host}}/payments/{{paymentId}}/capture
+Content-Type: application/json

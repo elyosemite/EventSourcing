@@ -3,6 +3,7 @@ namespace Core;
 public interface IDomainEvent
 {
     Guid AggregateId { get; }
+    Guid CorrelationId { get; }
     int EventVersion { get; }
     DateTime OccurredOn { get; }
 }
@@ -13,6 +14,7 @@ public interface IDomainEvent
 /// <param name="AggregateId"></param>
 public abstract record DomainEvent(Guid AggregateId) : IDomainEvent
 {
+    public Guid CorrelationId { get; set; }
     public int EventVersion { get; set; } = 1;
     public DateTime OccurredOn { get; set; } = DateTime.UtcNow;
 }

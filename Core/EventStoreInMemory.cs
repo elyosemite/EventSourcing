@@ -15,22 +15,22 @@ public class EventStoreInMemory : IEventStore
         CancellationToken cancellationToken = default)
     {
         lock (_lock)
-          {
-              if (!_store.TryGetValue(aggregateId, out var existing))
-              {
-                    existing = [];
-                    _store[aggregateId] = existing;
-              }
+        {
+            if (!_store.TryGetValue(aggregateId, out var existing))
+            {
+                existing = [];
+                _store[aggregateId] = existing;
+            }
 
-              var currentVersion = existing.Count;
+            var currentVersion = existing.Count;
 
-              if (currentVersion != expectedVersion)
-                  throw new ConcurrencyException(aggregateId, expectedVersion, currentVersion);
+            if (currentVersion != expectedVersion)
+              throw new ConcurrencyException(aggregateId, expectedVersion, currentVersion);
 
-              existing.AddRange(events);
-          }
+            existing.AddRange(events);
+        }
 
-          return Task.CompletedTask;
+        return Task.CompletedTask;
     }
 
     public Task<IReadOnlyList<IDomainEvent>> LoadAsync(
