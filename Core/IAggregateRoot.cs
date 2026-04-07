@@ -5,7 +5,7 @@ public interface IEventSourcing
     void Rehydrate(IEnumerable<IDomainEvent> history);
 }
 
-public interface IAggregateRoot : IEntity
+public interface IAggregateRoot : IEntity, IExpectedVersion
 {
     /// <summary>
     /// Atenção com este campo; Depois você tem que verificar se ele realmente
@@ -15,5 +15,5 @@ public interface IAggregateRoot : IEntity
 
     IReadOnlyList<IDomainEvent> UncommittedEvents { get; }
 
-    void MarkEventsAsCommitted(); // clear uncommitted events
+    void MarkEventsAsCommitted();
 }

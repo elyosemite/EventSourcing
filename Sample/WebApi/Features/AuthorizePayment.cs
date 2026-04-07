@@ -37,7 +37,7 @@ public class AuthorizePayment(IEventStore eventStore)
         await eventStore.AppendEventsAsync(
             payment.Id,
             payment.UncommittedEvents,
-            payment.Version - payment.UncommittedEvents.Count,
+            payment.ExpectedVersion,
             cancellationToken);
 
         payment.MarkEventsAsCommitted();

@@ -17,18 +17,16 @@ public class CapturePayment(IEventStore eventStore)
             throw new KeyNotFoundException($"Payment {request.PaymentId} not found.");
         
         var payment = Payment.RestoreFromHistory(eventHistory);
-        
+
         payment.Capture();
-        
-        var version = payment.Version - payment.UncommittedEvents.Count;
-        
+
         await eventStore.AppendEventsAsync(
             payment.OrderId,
             payment.UncommittedEvents,
-            version,
+            payment.ExpectedVersion,
             cancellationToken
         );
-        
+
         payment.MarkEventsAsCommitted();
     }
 }

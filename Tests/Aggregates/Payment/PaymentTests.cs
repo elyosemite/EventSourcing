@@ -14,6 +14,7 @@ public class PaymentTests
         var payment = Payment.Initiate(OrderId, 100m, "BRL");
 
         Assert.That(payment.UncommittedEvents, Has.Count.EqualTo(1));
+        Assert.That(payment.ExpectedVersion, Is.EqualTo(0));
         Assert.That(payment.UncommittedEvents[0], Is.TypeOf<PaymentInitiated>());
 
         var @event = (PaymentInitiated)payment.UncommittedEvents[0];
@@ -167,6 +168,7 @@ public class PaymentTests
         aggregate.Capture();
         Assert.That(aggregate.UncommittedEvents.Last(), Is.TypeOf<PaymentCaptured>());
         Assert.That(aggregate.Version, Is.EqualTo(3));
+        Assert.That(aggregate.ExpectedVersion, Is.EqualTo(2));
         Assert.That(aggregate.UncommittedEvents.Count, Is.EqualTo(1));
     }
 }

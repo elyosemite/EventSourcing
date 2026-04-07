@@ -16,17 +16,15 @@ public class InitPayment(IEventStore eventStore)
         CancellationToken cancellationToken)
     {
         var payment = Payment.Initiate(request.OrderId, request.Amount, request.Currency);
-        
-        var expectedVersion = payment.Version - payment.UncommittedEvents.Count;
-        
+
         await eventStore.AppendEventsAsync(
             payment.Id,
             payment.UncommittedEvents,
-            expectedVersion,
+            payment.ExpectedVersion,
             cancellationToken);
-        
+
         payment.MarkEventsAsCommitted();
-        
+
         return payment.Id;
     }
 }

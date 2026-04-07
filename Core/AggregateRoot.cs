@@ -14,6 +14,7 @@ public abstract class AggregateRoot : IAggregateRoot, IEventSourcing, IDispatche
 
     public Guid Id { get; protected set; }
     public int Version { get; protected set; }
+    public int ExpectedVersion => Version - _domainEvents.Count;
 
     public IReadOnlyList<IDomainEvent> UncommittedEvents => _domainEvents.AsReadOnly();
 
