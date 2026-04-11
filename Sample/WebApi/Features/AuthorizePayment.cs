@@ -1,4 +1,4 @@
-using Core.Aggregates;
+using Core;
 using Core.Aggregates.Payment;
 
 namespace EventSourcing.WebApi.Features;

@@ -1,4 +1,4 @@
-namespace Core.Aggregates;
+namespace Core;
 
 public interface IEventStore
 {

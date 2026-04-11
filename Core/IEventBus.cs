@@ -1,16 +1,17 @@
-namespace Core.Aggregates;
+namespace Core;
 
 public interface IPublisher
 {
-    Task PublishAsync(IDomainEvent @event, CancellationToken cancellationToken = default);
+    Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
+        where TEvent : IDomainEvent;
 }
 
-public interface IEventBus : IPublisher
+public interface ISubscriber
 {
     void SubscribeAsync<TEvent>(IEventListener<TEvent> handler)
         where TEvent : IDomainEvent;
+}
 
-    [Obsolete("Use PublishAsync from IPublisher.")]
-    Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default)
-        where TEvent : IDomainEvent;
+public interface IEventBus : IPublisher, ISubscriber
+{
 }

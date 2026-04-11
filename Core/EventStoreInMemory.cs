@@ -1,4 +1,3 @@
-using Core.Aggregates;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Core;
@@ -9,23 +8,23 @@ public class EventStoreInMemory : IEventStore
     private readonly Lock _lock = new();
 
     public Task AppendEventsAsync(
-        Guid aggregateId,
+        Guid streamId,
         IEnumerable<IDomainEvent> events,
         int expectedVersion,
         CancellationToken cancellationToken = default)
     {
         lock (_lock)
         {
-            if (!_store.TryGetValue(aggregateId, out var existing))
+            if (!_store.TryGetValue(streamId, out var existing))
             {
                 existing = [];
-                _store[aggregateId] = existing;
+                _store[streamId] = existing;
             }
 
             var currentVersion = existing.Count;
 
             if (currentVersion != expectedVersion)
-              throw new ConcurrencyException(aggregateId, expectedVersion, currentVersion);
+              throw new ConcurrencyException(streamId, expectedVersion, currentVersion);
 
             existing.AddRange(events);
         }
@@ -34,12 +33,12 @@ public class EventStoreInMemory : IEventStore
     }
 
     public Task<IReadOnlyList<IDomainEvent>> LoadAsync(
-        Guid aggregateId,
+        Guid streamId,
         CancellationToken cancellationToken = default)
     {
         lock (_lock)
         {
-            var events = _store.TryGetValue(aggregateId, out var existing)
+            var events = _store.TryGetValue(streamId, out var existing)
                 ? existing.AsReadOnly()
                 : (IReadOnlyList<IDomainEvent>)[];
 

@@ -1,4 +1,3 @@
-using Core.Aggregates;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Core;
@@ -6,7 +5,10 @@ namespace Core;
 public class EventBusInMemory : IEventBus
 {
     private readonly Dictionary<Type, List<Func<IDomainEvent, CancellationToken, Task>>> _subscriptions = new();
-
+    
+#if DEBUG
+    public Dictionary<Type, List<Func<IDomainEvent, CancellationToken, Task>>> Subscriptions => _subscriptions;
+#endif
     /// <summary>
     /// Registers an event handler for a specific event type.
     /// </summary>
