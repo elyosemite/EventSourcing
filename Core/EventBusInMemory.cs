@@ -14,7 +14,7 @@ public class EventBusInMemory : IEventBus
     /// </summary>
     /// <typeparam name="TEvent"></typeparam>
     /// <param name="listener"></param>
-    public void SubscribeAsync<TEvent>(IEventListener<TEvent> listener)
+    public Task SubscribeAsync<TEvent>(IEventListener<TEvent> listener)
         where TEvent : IDomainEvent
     {
         var type = typeof(TEvent);
@@ -26,6 +26,8 @@ public class EventBusInMemory : IEventBus
         }
 
         handlers.Add((@event, ct) => listener.HandleAsync((TEvent)@event, ct));
+        
+        return Task.CompletedTask;
      }
 
     /// <summary>
@@ -50,14 +52,6 @@ public class EventBusInMemory : IEventBus
         {
             await handler(@event, cancellationToken);
         }
-    }
-
-    public Task PublishAsync(IDomainEvent @event, CancellationToken ct = default)
-    {
-        if (!_subscriptions.TryGetValue(@event.GetType(), out var handlers))
-            return Task.CompletedTask;
-
-        return Task.WhenAll(handlers.Select(h => h(@event, ct)));
     }
 }
 
